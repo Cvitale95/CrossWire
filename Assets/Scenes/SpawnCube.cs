@@ -1,39 +1,53 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class SpawnCube : MonoBehaviour
 {
-
-    private bool spam = false;
+    private static Material glowMaterial;
+    private static Texture glowSprite;
+    private Random rng = new Random();
 
     // Start is called before the first frame update
     void Start()
     {
-
+        if(glowMaterial == null)
+        {
+            glowMaterial = (Material)Resources.Load<Material>("CrossWire/GlowEffect");
+        }
+        if(glowSprite == null)
+        {
+            glowSprite = (Texture)Resources.Load<Texture>("CrossWire/GlowSprite");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
-            spam = !spam;
-
-        if (spam)
         {
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = new Vector3(0, 5, 0);
             cube.AddComponent<Rigidbody>();
-            cube.AddComponent<BoxCollider>();
 
-            Renderer cubeRenderer = cube.GetComponent<Renderer>();
-            cubeRenderer.material.shader = Shader.Find("Legacy Shaders/VertexLit");
-            cubeRenderer.material.SetColor("_Emission", Color.red);
+            Renderer renderer = cube.GetComponent<Renderer>();
 
-            Light cubeLight = cube.AddComponent<Light>();
-            cubeLight.color = Color.red;
-            cubeLight.type = LightType.Point;
-            cubeLight.range = 20;
+            Material tmp = renderer.sharedMaterial = new Material(Shader.Find("MK/Glow/Selective/Sprites/Default"));
+            tmp.SetColor("_Color", GetRandomColor());
+            tmp.SetColor("_MKGlowColor", GetRandomColor());
+            tmp.SetFloat("_MKGlowPower", GetRandomNumber(0, 2.5f));
+            tmp.SetTexture("_MKGlowTex", glowSprite);
         }
+    }
+
+    private Color GetRandomColor()
+    {
+        return new Color(GetRandomNumber(0, 1), GetRandomNumber(0, 1), GetRandomNumber(0, 1));
+    }
+
+    private float GetRandomNumber(float low, float high)
+    {
+        return (float)(rng.NextDouble() * (high - low) + low);
     }
 }
