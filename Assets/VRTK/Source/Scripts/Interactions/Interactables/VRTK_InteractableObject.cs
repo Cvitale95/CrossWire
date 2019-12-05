@@ -637,6 +637,7 @@ namespace VRTK
             if (interactObjectHighlighter != null)
             {
                 interactObjectHighlighter.Highlight(highlightColor);
+                
             }
         }
 
@@ -1066,6 +1067,7 @@ namespace VRTK
             {
                 VRTK_InteractObjectHighlighter autoGenInteractHighlighter = gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
                 autoGenInteractHighlighter.touchHighlight = touchHighlightColor;
+                
                 autoGenInteractHighlighter.objectHighlighter = (objectHighlighter == null ? Highlighters.VRTK_BaseHighlighter.GetActiveHighlighter(gameObject) : objectHighlighter);
             }
 #pragma warning restore 0618
@@ -1097,9 +1099,25 @@ namespace VRTK
 
         protected virtual void FixedUpdate()
         {
+            Color green = new Color(0.078f,0.67f,0f,0f); //Enter Game
+            Color blue = new Color(0f,0.89f,1f,0); //Exit
+           
+                if(Input.GetKey(KeyCode.L)){
+                    if(green == touchHighlightColor){
+                      //  Application.LoadLevel("name of game scene");
+                    }
+                     if(blue == touchHighlightColor){
+                        UnityEditor.EditorApplication.isPlaying = false;
+                        Application.Quit();
+                    }
+    
+                   
+                }
+            
             if (trackPoint != null && grabAttachMechanicScript != null)
             {
                 grabAttachMechanicScript.ProcessFixedUpdate();
+                
             }
 
             if (secondaryGrabActionScript != null)
@@ -1112,7 +1130,7 @@ namespace VRTK
         {
             AttemptSetGrabMechanic();
             AttemptSetSecondaryGrabAction();
-
+      
             if (trackPoint != null && grabAttachMechanicScript != null)
             {
                 grabAttachMechanicScript.ProcessUpdate();
@@ -1589,7 +1607,6 @@ namespace VRTK
                 InteractableObjectUngrabbed += methodCallback;
             }
         }
-
         protected virtual void ManageUnuseSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
         {
             if (!register)
